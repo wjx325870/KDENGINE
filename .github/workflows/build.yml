@@ -10,32 +10,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 检出仓库代码（包含你上传的 ZIP）
+      # 1. 检出代码（包含你上传的 ZIP）
       - name: 检出代码
         uses: actions/checkout@v4
 
-      # 2. 设置 JDK 17（Android 编译需要）
+      # 2. 设置 JDK 17
       - name: 设置 JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. 解压你上传的工程源码（假设 ZIP 名为 KDENGINE-src.zip）
+      # 3. 查看当前目录文件（调试用）
+      - name: 查看当前目录文件
+        run: ls -la
+
+      # 4. 解压你上传的工程源码（注意文件名必须完全一致！）
       - name: 解压源码
         run: |
           unzip -o KD_ENGINE-src.zip
-          rm -f KDENGINE-src.zip   # 解压后删除压缩包，保持目录干净
+          rm -f KD_ENGINE-src.zip
 
-      # 4. 给 gradlew 可执行权限
+      # 5. 查看解压后的根目录（确认结构）
+      - name: 查看解压后根目录
+        run: ls -la
+
+      # 6. 赋予 gradlew 可执行权限
       - name: 赋予执行权限
         run: chmod +x gradlew
 
-      # 5. 编译 Debug APK
+      # 7. 强制使用 Gradle 7.3.3（兼容老工程）
+      - name: 使用 Gradle 7.3.3
+        run: ./gradlew wrapper --gradle-version 7.3.3 --distribution-type bin
+
+      # 8. 编译 Debug APK
       - name: 编译 APK
         run: ./gradlew assembleDebug
 
-      # 6. 上传编译好的 APK 到 Actions 产物
+      # 9. 上传编译好的 APK
       - name: 上传 APK
         uses: actions/upload-artifact@v4
         with:
