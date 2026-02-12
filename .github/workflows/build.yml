@@ -1,0 +1,43 @@
+name: 构建 KDENGINE APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:        # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出仓库代码（包含你上传的 ZIP）
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      # 2. 设置 JDK 17（Android 编译需要）
+      - name: 设置 JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. 解压你上传的工程源码（假设 ZIP 名为 KDENGINE-src.zip）
+      - name: 解压源码
+        run: |
+          unzip -o KDENGINE-src.zip
+          rm -f KDENGINE-src.zip   # 解压后删除压缩包，保持目录干净
+
+      # 4. 给 gradlew 可执行权限
+      - name: 赋予执行权限
+        run: chmod +x gradlew
+
+      # 5. 编译 Debug APK
+      - name: 编译 APK
+        run: ./gradlew assembleDebug
+
+      # 6. 上传编译好的 APK 到 Actions 产物
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: KDENGINE-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
