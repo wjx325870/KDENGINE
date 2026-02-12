@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -23,9 +24,13 @@ jobs:
           wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar
           sudo mv apktool_2.9.3.jar /usr/local/bin/apktool.jar
 
-      - name: 下载并解包 APK 壳
+      - name: 下载 APK 壳
         run: |
-          curl -L -o template.apk https://github.com/mason-lai/AndroLua-plus/releases/download/v7.0-beta5/AndroLua-plus-v7.0-beta5.apk
+          curl -L -o template.apk \
+            https://github.com/mason-lai/AndroLua-plus/releases/download/v7.0-beta5/AndroLua-plus-v7.0-beta5.apk
+
+      - name: 解包
+        run: |
           mkdir unpacked
           apktool d template.apk -o unpacked -f
 
