@@ -13,36 +13,26 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      # 🔥 必须用 Java 11（Android Gradle Plugin 要求）
       - name: 设置 JDK 11
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: 查看当前目录文件
-        run: ls -la
-
       - name: 解压源码
         run: |
           unzip -o KD_ENGINE-src.zip
           rm -f KD_ENGINE-src.zip
 
-      - name: 查看解压后根目录
-        run: ls -la
+      # 🔥 强制将 Gradle Wrapper 改为 7.2（无论原文件是什么）
+      - name: 强制使用 Gradle 7.2
+        run: |
+          sed -i 's#distributionUrl=.*#distributionUrl=https\\://services.gradle.org/distributions/gradle-7.2-bin.zip#' gradle/wrapper/gradle-wrapper.properties
+          echo "✅ 已强制设置为 Gradle 7.2"
+          cat gradle/wrapper/gradle-wrapper.properties
 
       - name: 赋予执行权限
         run: chmod +x gradlew
-
-      # 🔥 强制使用 Gradle 7.2（与 Java 11 完美兼容）
-      - name: 使用 Gradle 7.2
-        run: ./gradlew wrapper --gradle-version 7.2 --distribution-type bin
-
-      # 🔥 🔥 🔥 关键修复：强制降级 Android Gradle 插件到 4.2.1
-      - name: 修复 build.gradle 插件版本
-        run: |
-          sed -i 's/com.android.tools.build:gradle:.*/com.android.tools.build:gradle:4.2.1/' app/build.gradle
-          sed -i 's/classpath .*android.*/classpath "com.android.tools.build:gradle:4.2.1"/' build.gradle
 
       - name: 接受 Android SDK 许可证
         run: |
@@ -51,7 +41,7 @@ jobs:
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > $ANDROID_SDK_ROOT/licenses/android-sdk-arm-dbt-license
           echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
 
-      # 🔥 编译 APK（使用 --no-daemon 避免缓存问题）
+      # 🔥 不再依赖 wrapper 命令，直接编译
       - name: 编译 APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
