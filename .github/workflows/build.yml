@@ -24,7 +24,7 @@ jobs:
       # 3. 解压你上传的工程源码（假设 ZIP 名为 KDENGINE-src.zip）
       - name: 解压源码
         run: |
-          unzip -o KDENGINE-src.zip
+          unzip -o KD_ENGINE-src.zip
           rm -f KDENGINE-src.zip   # 解压后删除压缩包，保持目录干净
 
       # 4. 给 gradlew 可执行权限
