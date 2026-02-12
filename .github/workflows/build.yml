@@ -1,9 +1,10 @@
-name: 构建 KDENGINE APK
+name: 打包 KDENGINE（Beta 壳）
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    paths:
+      - 'main.lua'          # 只在你更新 main.lua 时触发
+  workflow_dispatch:       # 也可手动触发
 
 jobs:
   build:
@@ -13,40 +14,37 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置 JDK 11
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: 解压源码
+      - name: 下载 AndroLua+ Beta 壳
         run: |
-          unzip -o KD_ENGINE-src.zip
-          rm -f KD_ENGINE-src.zip
+          curl -L -o template.apk \
+            https://github.com/mason-lai/AndroLua-plus/releases/download/v7.0-beta5/AndroLua-plus-v7.0-beta5.apk
 
-      # 🔥 强制将 Gradle Wrapper 改为 7.2（无论原文件是什么）
-      - name: 强制使用 Gradle 7.2
+      - name: 解包 APK
         run: |
-          sed -i 's#distributionUrl=.*#distributionUrl=https\\://services.gradle.org/distributions/gradle-7.2-bin.zip#' gradle/wrapper/gradle-wrapper.properties
-          echo "✅ 已强制设置为 Gradle 7.2"
-          cat gradle/wrapper/gradle-wrapper.properties
+          mkdir unpacked
+          apktool d template.apk -o unpacked -f
 
-      - name: 赋予执行权限
-        run: chmod +x gradlew
-
-      - name: 接受 Android SDK 许可证
+      - name: 替换 main.lua
         run: |
-          mkdir -p $ANDROID_SDK_ROOT/licenses
-          echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
-          echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > $ANDROID_SDK_ROOT/licenses/android-sdk-arm-dbt-license
-          echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_SDK_ROOT/licenses/android-sdk-preview-license
+          cp main.lua unpacked/assets/main.lua
 
-      # 🔥 不再依赖 wrapper 命令，直接编译
-      - name: 编译 APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: 重打包
+        run: |
+          apktool b unpacked -o unsigned.apk
+
+      - name: 签名（使用通用测试密钥）
+        run: |
+          wget -q https://raw.githubusercontent.com/patrickfav/uber-apk-signer/master/uber-apk-signer.jar
+          java -jar uber-apk-signer.jar \
+            --apks unsigned.apk \
+            --out KDENGINE.apk \
+            --ksDebug ~/.android/debug.keystore \
+            --ksPass android \
+            --keyPass android \
+            --ksAlias androiddebugkey
 
       - name: 上传 APK
         uses: actions/upload-artifact@v4
         with:
-          name: KDENGINE-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: KDENGINE-Beta
+          path: KDENGINE.apk
