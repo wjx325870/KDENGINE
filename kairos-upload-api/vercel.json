@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "routes": [
+    { "src": "/api/upload", "dest": "/api/upload.js" }
+  ],
   "functions": {
     "api/upload.js": {
       "maxDuration": 10
