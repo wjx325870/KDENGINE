@@ -1,8 +1,11 @@
 {
-  "name": "kairos-upload-api",
-  "version": "1.0.0",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
-    "busboy": "^1.6.0"
+  "version": 2,
+  "routes": [
+    { "src": "/api/upload", "dest": "/kairos-upload-api/api/upload.js" }
+  ],
+  "functions": {
+    "kairos-upload-api/api/upload.js": {
+      "maxDuration": 10
+    }
   }
 }
