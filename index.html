@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Kairos Ecosystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 16px 20px;
+        }
+        /* 标题栏 */
+        .header {
+            position: relative;
+            background-color: #1e1e1e;
+            height: 80px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .header .semicircle {
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #00c8b0;
+            border-radius: 50%;
+        }
+        .header h1 {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 80px;
+            font-size: 24px;
+            color: white;
+            margin: 0;
+        }
+        /* 右上角按钮组 */
+        .top-right-buttons {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #00c8b0;
+            color: #00c8b0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-btn.active {
+            background: #00c8b0;
+            color: #000;
+            border-color: #00c8b0;
+        }
+        .info-btn {
+            background: transparent;
+            border: 1px solid #00c8b0;
+            color: #00c8b0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #2a2a2a;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 20px;
+            color: #00c8b0;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .modal-section {
+            margin-bottom: 20px;
+        }
+        .modal-section h3 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .modal-section p {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+        .modal-close {
+            background-color: #00c8b0;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 16px;
+            width: 100%;
+        }
+        /* 卡片 */
+        .section-title {
+            font-size: 18px;
+            color: #00c8b0;
+            font-weight: bold;
+            margin: 20px 0 10px;
+        }
+        .card {
+            background-color: #2a2a2a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+        .card-author {
+            color: #aaa;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .card-desc {
+            color: #ccc;
+            font-size: 14px;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+        .card-version {
+            background-color: #3a3a3a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #00c8b0;
+        }
+        .download-btn {
+            background-color: #00c853;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .download-btn:hover {
+            background-color: #00a844;
+        }
+        .download-btn.small {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        /* 联系卡片 */
+        .contact-card {
+            background-color: #2a2a2a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 30px;
+            border-left: 4px solid #00c8b0;
+        }
+        .contact-item {
+            margin: 8px 0;
+            font-family: monospace;
+            color: #00c8b0;
+        }
+        .contact-item a {
+            color: #00c8b0;
+            text-decoration: none;
+        }
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+        .loading, .error {
+            text-align: center;
+            color: #aaa;
+            padding: 40px;
+        }
+        .error {
+            color: #ff5555;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #333;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="semicircle"></div>
+        <div class="top-right-buttons">
+            <button class="info-btn" onclick="openModal()">?</button>
+            <button class="lang-btn" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+        </div>
+        <h1>Kairos Ecosystem</h1>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">关于 Kairos 产品</div>
+            <div class="modal-section">
+                <h3>Kairos Modules (KM)</h3>
+                <p>基于 Lua 5.1 编写而成</p>
+                <p>属于 Kairos Dynamics Engine 的子产品</p>
+            </div>
+            <div class="modal-section">
+                <h3>Kairos Dynamics Engine (KE)</h3>
+                <p>属于此项目的主要产品</p>
+                <p>使用 Lua 5.1 编写</p>
+                <p>支持 5.1 语言输入并返回</p>
+                <p>支持管理器部分权限</p>
+                <p style="font-size: 12px; color: #888;">(因为所有 apk 都用的是其他人的 apk 壳，所以会有一些用不上的权限。你如果被冒犯到了，可以选择禁止或不使用)</p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- 云端模组列表 -->
+        <div class="section-title" id="mods-section-title">Cloud Modules</div>
+        <div id="mods-list" class="loading">Loading...</div>
+
+        <!-- 核心应用卡片（名称固定英文，其他可翻译） -->
+        <div class="section-title" id="core-apps-title">Core Applications</div>
+        <div class="card">
+            <div class="card-title">Kairos Dynamics Engine (KE)</div>
+            <div class="card-author" id="ke-author">Core command engine</div>
+            <div class="card-desc" id="ke-desc">Lua 5.1 environment, module management, file operations, ZIP packing, cloud updates</div>
+            <div class="card-footer">
+                <span class="card-version" id="ke-version">v1.2.0</span>
+                <a href="https://github.com/wjx325870/KDENGINE/releases" class="download-btn" id="ke-download-btn">Download</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Kairos Modules (KM)</div>
+            <div class="card-author" id="km-author">Module marketplace</div>
+            <div class="card-desc" id="km-desc">Browse, download, and upload modules; offline package installer</div>
+            <div class="card-footer">
+                <span class="card-version" id="km-version">v2.5.3</span>
+                <a href="https://github.com/wjx325870/KDENGINE/releases" class="download-btn" id="km-download-btn">Download</a>
+            </div>
+        </div>
+
+        <!-- 联系卡片 -->
+        <div class="contact-card">
+            <div class="contact-item">GitHub: <a href="https://github.com/wjx325870" target="_blank">wjx325870</a></div>
+            <div class="contact-item">QQ: 2435053202</div>
+            <div class="contact-item">Email: <a href="mailto:2435053202@qq.com">2435053202@qq.com</a></div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- Cookie 操作 ----------
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // ---------- 语言资源 ----------
+        const i18n = {
+            en: {
+                mods_section: "Cloud Modules",
+                core_apps: "Core Applications",
+                ke_author: "Core command engine",
+                ke_desc: "Lua 5.1 environment, module management, file operations, ZIP packing, cloud updates",
+                ke_version: "v1.2.0",
+                ke_download: "Download",
+                km_author: "Module marketplace",
+                km_desc: "Browse, download, and upload modules; offline package installer",
+                km_version: "v2.5.3",
+                km_download: "Download",
+                loading: "Loading...",
+                error: "Failed to load modules"
+            },
+            zh: {
+                mods_section: "云端模组",
+                core_apps: "核心应用",
+                ke_author: "核心命令行引擎",
+                ke_desc: "Lua 5.1 环境，模块管理，文件操作，ZIP打包，云端更新",
+                ke_version: "v1.2.0",
+                ke_download: "下载",
+                km_author: "模组商店",
+                km_desc: "浏览、下载、上传模组；离线包安装器",
+                km_version: "v2.5.3",
+                km_download: "下载",
+                loading: "加载中...",
+                error: "模组加载失败"
+            }
+        };
+
+        let currentLang = 'en';
+        const modsData = [];
+
+        // ---------- 更新界面文字 ----------
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const t = i18n[lang];
+
+            document.getElementById('mods-section-title').innerText = t.mods_section;
+            document.getElementById('core-apps-title').innerText = t.core_apps;
+            document.getElementById('ke-author').innerText = t.ke_author;
+            document.getElementById('ke-desc').innerText = t.ke_desc;
+            document.getElementById('ke-version').innerText = t.ke_version;
+            document.getElementById('ke-download-btn').innerText = t.ke_download;
+            document.getElementById('km-author').innerText = t.km_author;
+            document.getElementById('km-desc').innerText = t.km_desc;
+            document.getElementById('km-version').innerText = t.km_version;
+            document.getElementById('km-download-btn').innerText = t.km_download;
+
+            renderModsList(); // 模组列表中的下载按钮文字需更新
+
+            // 保存语言偏好到 cookie，30天有效期
+            setCookie('lang', lang, 30);
+        }
+
+        // ---------- 切换按钮高亮 ----------
+        function setActiveLangButton(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        // ---------- 渲染模组列表 ----------
+        function renderModsList() {
+            const container = document.getElementById('mods-list');
+            if (!modsData || modsData.length === 0) {
+                container.innerHTML = `<div class="loading">${i18n[currentLang].loading}</div>`;
+                return;
+            }
+            let html = '';
+            modsData.forEach(mod => {
+                html += `
+                    <div class="card">
+                        <div class="card-title">${mod.name}</div>
+                        <div class="card-author">@${mod.author || 'unknown'}</div>
+                        <div class="card-desc">${mod.desc || ''}</div>
+                        <div class="card-footer">
+                            <span class="card-version">${mod.version || '1.0'}</span>
+                            <a href="${mod.url}" class="download-btn small" target="_blank">${i18n[currentLang].ke_download}</a>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ---------- 从API获取模组列表 ----------
+        async function fetchMods() {
+            try {
+                const response = await fetch('https://kdengine.vercel.app/api/mods');
+                if (!response.ok) throw new Error('Network error');
+                const data = await response.json();
+                modsData.length = 0;
+                modsData.push(...data);
+                renderModsList();
+            } catch (err) {
+                document.getElementById('mods-list').innerHTML = `<div class="error">${i18n[currentLang].error}</div>`;
+            }
+        }
+
+        // ---------- 模态框控制 ----------
+        function openModal() {
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        // ---------- 初始化 ----------
+        document.addEventListener('DOMContentLoaded', () => {
+            // 读取 cookie 中的语言设置
+            const savedLang = getCookie('lang');
+            const initialLang = (savedLang === 'zh') ? 'zh' : 'en';
+
+            updateLanguage(initialLang);
+            setActiveLangButton(initialLang);
+
+            // 绑定语言切换按钮事件
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.dataset.lang;
+                    updateLanguage(lang);
+                    setActiveLangButton(lang);
+                });
+            });
+
+            // 点击模态框外部关闭
+            document.getElementById('infoModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // 获取模组列表
+            fetchMods();
+        });
+    </script>
+</body>
+</html>
