@@ -20,5 +20,5 @@ jobs:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
           # 设置 Gitee 远程仓库（请将用户名和仓库名改为你自己的）
-          git remote add gitee https://你的Gitee用户名:${GITEE_TOKEN}@gitee.com/你的Gitee用户名/你的Gitee仓库名.git
+          https://wjx325870:${GITEE_TOKEN}@gitee.com/wjx325870/KDENGINE.git
           git push -f gitee main
