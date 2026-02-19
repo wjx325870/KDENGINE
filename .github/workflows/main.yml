@@ -19,5 +19,5 @@ jobs:
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
-          git remote add gitee https://wjx325870:${GITEE_TOKEN}@gitee.com/wjx325870/KDENGINE.git
+          git remote add gitee https://wssrwjjd:${GITEE_TOKEN}@gitee.com/wssrwjjd/KDENGINE.git
           git push -f gitee main
