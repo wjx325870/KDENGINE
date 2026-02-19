@@ -1,0 +1,24 @@
+name: Sync to Gitee
+
+on:
+  push:
+    branches: [ main ]        # 监听 main 分支的推送
+  workflow_dispatch:          # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 推送到 Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          # 设置 Gitee 远程仓库（请将用户名和仓库名改为你自己的）
+          git remote add gitee https://你的Gitee用户名:${GITEE_TOKEN}@gitee.com/你的Gitee用户名/你的Gitee仓库名.git
+          git push -f gitee main
