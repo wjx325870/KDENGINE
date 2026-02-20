@@ -3,21 +3,20 @@ name: Sync to Gitee
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  sync:
+  push-to-gitee:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 检出代码
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 拉取完整历史
 
-      - name: 推送到 Gitee
+      - name: Push to Gitee
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
+          # 注意：这里的用户名是登录名 wjx325870，不是仓库路径的 wssrwjjd
           git remote add gitee https://wjx325870:${GITEE_TOKEN}@gitee.com/wssrwjjd/KDENGINE.git
           git push -f gitee main
